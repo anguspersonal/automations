@@ -1,7 +1,8 @@
 const express = require('express');
 const { getNotionAutomationsToken } = require('../../../config/env');
-const { createNotionAuthMiddleware, validateSprintNameRequest } = require('./middleware');
+const { createNotionAuthMiddleware, validateNotionPageId, validateSprintNameRequest } = require('./middleware');
 const { handleSprintName } = require('./sprint-name');
+const { handleSprintNameAsync } = require('./sprint-name-async');
 const { createLoggingMiddleware } = require('../../../lib/logging');
 
 const router = express.Router();
@@ -15,6 +16,7 @@ router.use(createLoggingMiddleware());
 router.use(createNotionAuthMiddleware(notionToken));
 
 router.post('/sprint-name', validateSprintNameRequest, handleSprintName);
+router.post('/sprint-name/async', validateNotionPageId, validateSprintNameRequest, handleSprintNameAsync);
 
 module.exports = router;
 
