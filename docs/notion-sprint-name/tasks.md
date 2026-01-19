@@ -125,7 +125,7 @@
     - **Property 3: Authentication Enforcement**
     - For any request missing/invalid token, response is HTTP `401` with JSON `{ error: string }`
     - **Validates: Requirements 2.1, 2.2, 2.3**
-  - [ ]* 8.6 Write property test for seed requirement validation
+  - [x]* 8.6 Write property test for seed requirement validation
     - **Property 4: Seed Requirement Validation**
     - For any request body missing `seed` or with empty/whitespace `seed`, response is HTTP `400` with JSON `{ error: string }` indicating `seed` is required
     - **Validates: Requirements 3.3, 3.4**
