@@ -79,8 +79,8 @@
     - Ensure `request_id` is a non-empty string (e.g. UUID), and is stable within the request (used for logging/correlation)
     - _Requirements: 1.3, 4.1, 4.2, 4.3, 4.4, 4.5, 6.4_
 
-- [ ] 6. Add basic observability (request id + latency)
-  - [ ] 6.1 Implement logging middleware for `/v1/notion/*`
+- [x] 6. Add basic observability (request id + latency)
+  - [x] 6.1 Implement logging middleware for `/v1/notion/*`
     - Create `lib/logging.js` with `createLoggingMiddleware()`
     - Generate a request id per request (e.g. UUID v4) and attach to `req`
     - Measure latency and emit structured logs including:

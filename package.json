@@ -10,7 +10,7 @@
   },
   "scripts": {
     "start": "node app.js",
-    "lint": "node --check app.js routes/index.js routes/v1/notion/index.js routes/v1/notion/middleware.js routes/v1/notion/sprint-name.js lib/wordlists.js lib/name-generator.js config/env.js",
+    "lint": "node --check app.js routes/index.js routes/v1/notion/index.js routes/v1/notion/middleware.js routes/v1/notion/sprint-name.js lib/wordlists.js lib/name-generator.js lib/logging.js config/env.js",
     "test": "npm run lint",
     "build": "npm run lint"
   }
