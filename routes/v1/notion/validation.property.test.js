@@ -34,7 +34,7 @@ describe('Notion sprint-name request validation (property tests)', () => {
             .map((seed) => ({ seed }))
         ),
         (body) => {
-          const req = { body };
+          const req = { get: () => undefined, body };
           const res = createMockRes();
           const next = jest.fn();
 

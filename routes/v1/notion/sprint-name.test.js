@@ -58,7 +58,7 @@ describe('Notion sprint name - auth middleware', () => {
 
 describe('Notion sprint name - request validation middleware', () => {
   test('missing seed -> 400 + JSON error', () => {
-    const req = { body: {} };
+    const req = { get: () => undefined, body: {} };
     const res = createMockRes();
     const next = createNextSpy();
 
@@ -70,7 +70,7 @@ describe('Notion sprint name - request validation middleware', () => {
   });
 
   test('non-string seed -> 400 + JSON error', () => {
-    const req = { body: { seed: 123 } };
+    const req = { get: () => undefined, body: { seed: 123 } };
     const res = createMockRes();
     const next = createNextSpy();
 
@@ -82,7 +82,7 @@ describe('Notion sprint name - request validation middleware', () => {
   });
 
   test('empty seed -> 400 + JSON error', () => {
-    const req = { body: { seed: '   ' } };
+    const req = { get: () => undefined, body: { seed: '   ' } };
     const res = createMockRes();
     const next = createNextSpy();
 
@@ -91,6 +91,22 @@ describe('Notion sprint name - request validation middleware', () => {
     expect(next).not.toHaveBeenCalled();
     expect(res.statusCode).toBe(400);
     expect(res.body).toEqual({ error: '`seed` must be a non-empty string' });
+  });
+
+  test('seed from header passes and normalizes to req.body.seed', () => {
+    const req = {
+      get: (key) => (key === 'x-notion-sprint-seed' ? '2026-W04' : undefined),
+      body: undefined,
+    };
+    const res = createMockRes();
+    const next = createNextSpy();
+
+    validateSprintNameRequest(req, res, next);
+
+    expect(res.statusCode).toBeUndefined();
+    expect(res.body).toBeUndefined();
+    expect(next).toHaveBeenCalledTimes(1);
+    expect(req.body).toEqual({ seed: '2026-W04' });
   });
 });
 

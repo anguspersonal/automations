@@ -29,12 +29,13 @@ For a step-by-step guide to deploying on [Railway](https://railway.app/?referral
 
 - `Content-Type: application/json`
 - `X-Notion-Automations-Token: <shared secret>`
+- `X-Notion-Sprint-Seed: <string>`
 
-### Request body
+### Seed
 
-```json
-{ "seed": "2026-W04" }
-```
+Provide a deterministic seed value (e.g. `2026-W04`) via the `X-Notion-Sprint-Seed` header.
+
+For backwards compatibility, the endpoint also accepts `{ "seed": "<string>" }` in the JSON body.
 
 ### Success response (200)
 

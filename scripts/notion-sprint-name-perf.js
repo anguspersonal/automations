@@ -65,9 +65,10 @@ function headerGetter(headers) {
   return (key) => normalized[String(key).toLowerCase()];
 }
 
-function makeReq({ token, body }) {
+function makeReq({ token, seedHeader, body }) {
   const headers = {};
   if (token !== undefined) headers['x-notion-automations-token'] = token;
+  if (seedHeader !== undefined) headers['x-notion-sprint-seed'] = seedHeader;
 
   return {
     requestId: typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex'),
@@ -78,7 +79,7 @@ function makeReq({ token, body }) {
   };
 }
 
-function runCase({ name, token, body, expectedStatus }, iterations) {
+function runCase({ name, token, seedHeader, body, expectedStatus }, iterations) {
   const expectedToken = 'perf-token';
   const auth = createNotionAuthMiddleware(expectedToken);
 
@@ -86,7 +87,7 @@ function runCase({ name, token, body, expectedStatus }, iterations) {
   const statuses = new Map();
 
   for (let i = 0; i < iterations; i++) {
-    const req = makeReq({ token, body });
+    const req = makeReq({ token, seedHeader, body });
     const res = createMockRes();
 
     const start = nowNs();
@@ -131,14 +132,17 @@ function main() {
   console.log('');
 
   // Warmup to reduce one-time effects (JIT, module init, etc.)
-  runCase({ name: 'warmup (valid)', token: 'perf-token', body: { seed: '2026-W04' }, expectedStatus: 200 }, warmup);
+  runCase(
+    { name: 'warmup (valid)', token: 'perf-token', seedHeader: '2026-W04', body: {}, expectedStatus: 200 },
+    warmup
+  );
 
   const cases = [
-    { name: 'valid', token: 'perf-token', body: { seed: '2026-W04' }, expectedStatus: 200 },
-    { name: 'auth missing token', token: undefined, body: { seed: '2026-W04' }, expectedStatus: 401 },
-    { name: 'auth invalid token', token: 'wrong', body: { seed: '2026-W04' }, expectedStatus: 401 },
-    { name: 'validation missing seed', token: 'perf-token', body: {}, expectedStatus: 400 },
-    { name: 'validation empty seed', token: 'perf-token', body: { seed: '   ' }, expectedStatus: 400 },
+    { name: 'valid', token: 'perf-token', seedHeader: '2026-W04', body: {}, expectedStatus: 200 },
+    { name: 'auth missing token', token: undefined, seedHeader: '2026-W04', body: {}, expectedStatus: 401 },
+    { name: 'auth invalid token', token: 'wrong', seedHeader: '2026-W04', body: {}, expectedStatus: 401 },
+    { name: 'validation missing seed', token: 'perf-token', seedHeader: undefined, body: {}, expectedStatus: 400 },
+    { name: 'validation empty seed', token: 'perf-token', seedHeader: '   ', body: {}, expectedStatus: 400 },
   ];
 
   const results = cases.map((c) => runCase(c, iterations));

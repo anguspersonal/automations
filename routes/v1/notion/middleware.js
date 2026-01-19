@@ -15,13 +15,14 @@ function createNotionAuthMiddleware(expectedToken) {
 }
 
 function validateSprintNameRequest(req, res, next) {
+  // Prefer header-based seed for easier invocation from no-code tools.
+  // Backwards-compatible fallback: allow seed in JSON body.
+  const headerSeed = req.get('x-notion-sprint-seed');
   const body = req.body;
+  const bodySeed =
+    body && typeof body === 'object' && !Array.isArray(body) ? body.seed : undefined;
 
-  if (!body || typeof body !== 'object' || Array.isArray(body)) {
-    return res.status(400).json({ error: 'Request body must be a JSON object' });
-  }
-
-  const seed = body.seed;
+  const seed = headerSeed !== undefined && headerSeed !== null ? headerSeed : bodySeed;
 
   if (seed === undefined || seed === null) {
     return res.status(400).json({ error: '`seed` is required' });
@@ -34,6 +35,12 @@ function validateSprintNameRequest(req, res, next) {
   if (seed.trim() === '') {
     return res.status(400).json({ error: '`seed` must be a non-empty string' });
   }
+
+  // Normalize for downstream handler (which reads req.body.seed).
+  if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
+    req.body = {};
+  }
+  req.body.seed = seed;
 
   return next();
 }
