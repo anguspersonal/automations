@@ -49,6 +49,22 @@ async function applySprintNameToNotionPage({ pageId, seed }) {
   });
 }
 
+function logAsyncNotionFailure({ requestId, pageId }, err) {
+  const payload = {
+    level: 'error',
+    msg: 'notion sprint-name async job failed',
+    request_id: requestId,
+    page_id: pageId,
+    error: {
+      message: err && err.message ? String(err.message) : 'Unknown error',
+      status: err && err.status ? err.status : undefined,
+      response_body: err && err.response ? err.response.body : undefined,
+    },
+  };
+
+  console.error(JSON.stringify(payload));
+}
+
 function handleSprintNameAsync(req, res) {
   try {
     const requestId = getRequestId(req);
@@ -56,7 +72,9 @@ function handleSprintNameAsync(req, res) {
     const seed = req.body && req.body.seed;
 
     // Enqueue background work before responding; but do not wait for it.
-    const result = enqueueJob(() => applySprintNameToNotionPage({ pageId, seed }));
+    const result = enqueueJob(() => applySprintNameToNotionPage({ pageId, seed }), {
+      onError: (err) => logAsyncNotionFailure({ requestId, pageId }, err),
+    });
 
     if (!result.accepted) {
       return res.status(429).json({ error: 'Server is busy, try again later' });

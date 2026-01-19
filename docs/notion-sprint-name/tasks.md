@@ -56,13 +56,13 @@
     - Add `routes/v1/notion/page-id.property.test.js` (or extend an existing property test file)
     - _Requirements: 4.2_
 
-- [ ] 4. Implement bounded background queue behavior for async processing
-  - [ ] 4.1 Ensure enqueue is bounded and returns `429` when saturated
+- [x] 4. Implement bounded background queue behavior for async processing
+  - [x] 4.1 Ensure enqueue is bounded and returns `429` when saturated
     - Keep a bounded pending counter and configurable max (`ASYNC_MAX_PENDING`, default `50`)
     - Ensure async handler returns `429 { error: string }` when queue is full
     - Update `lib/async-jobs.js` and `routes/v1/notion/sprint-name-async.js` as needed
     - _Requirements: 6.5_
-  - [ ] 4.2 Ensure background failures never block the webhook response and are logged with correlation identifiers
+  - [x] 4.2 Ensure background failures never block the webhook response and are logged with correlation identifiers
     - Ensure async job errors are caught
     - Log an error that includes `request_id` and `page_id` (best-effort) for Notion API failures
     - Consider passing context into `enqueueJob()` or wrapping the job function in the handler
