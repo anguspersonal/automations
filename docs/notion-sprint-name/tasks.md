@@ -106,18 +106,18 @@
     - Choose and configure a JS test runner (e.g. Jest or Vitest) and add scripts to `package.json`
     - Add dev dependencies needed for property tests (e.g. `fast-check`)
     - _Requirements: 3.2, 4.1, 6.4_
-  - [ ] 8.2 Add unit tests for middleware and generator
+  - [x] 8.2 Add unit tests for middleware and generator
     - Add tests covering:
       - Auth: missing/invalid token → 401 + JSON error
       - Validation: missing/empty/non-string `seed` → 400 + JSON error
       - Generator: returns `name`, `slug`, `generator_version`; `name === "Sprint " + slug`
       - Handler: returns `request_id`, `name`, `slug`, `generator_version`; `request_id` is non-empty
     - _Requirements: 1.3, 1.4, 2.1, 2.2, 2.3, 3.3, 3.4, 4.1, 4.2, 4.3, 4.4, 4.5_
-  - [ ]* 8.3 Write property test for deterministic name generation
+  - [x]* 8.3 Write property test for deterministic name generation
     - **Property 1: Deterministic Name Generation**
     - For any non-empty `seed`, repeated calls with same `seed` + same `generator_version` yield identical `{ name, slug, generator_version }`
     - **Validates: Requirements 3.1, 3.2**
-  - [ ]* 8.4 Write property test for response format compliance
+  - [x]* 8.4 Write property test for response format compliance
     - **Property 2: Response Format Compliance**
     - For any valid `seed`, response has exactly `{ request_id, name, slug, generator_version }`, `request_id` is non-empty, `name === "Sprint " + slug`, and `slug` is a non-empty lowercase-and-hyphens string with no spaces
     - **Validates: Requirements 1.3, 4.1, 4.2, 4.3, 4.4, 4.5**
