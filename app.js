@@ -2,9 +2,13 @@ const express = require('express');
 const path = require('path');
 const indexRouter = require('./routes/index');
 const notionRouter = require('./routes/v1/notion');
+const { getNotionAutomationsToken } = require('./config/env');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Fail fast on required env vars.
+getNotionAutomationsToken();
 
 // Parse JSON request bodies (for API routes)
 app.use(express.json());

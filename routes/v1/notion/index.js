@@ -1,6 +1,13 @@
 const express = require('express');
+const { getNotionAutomationsToken } = require('../../../config/env');
+const { createNotionAuthMiddleware } = require('./middleware');
 
 const router = express.Router();
+
+const notionToken = getNotionAutomationsToken();
+
+// Apply auth middleware to all Notion v1 routes.
+router.use(createNotionAuthMiddleware(notionToken));
 
 // Placeholder endpoint registration.
 // The full handler (auth, validation, generator, observability) is implemented in later tasks.

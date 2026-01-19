@@ -1,19 +1,19 @@
 # Implementation Plan
 
-- [ ] 1. Add versioned Notion API routing and JSON handling
-  - [ ] 1.1 Mount `/v1/notion` routes in the Express app
+- [x] 1. Add versioned Notion API routing and JSON handling
+  - [x] 1.1 Mount `/v1/notion` routes in the Express app
     - Update `app.js` to add `express.json()` for request parsing
     - Add middleware to normalize invalid JSON parse errors to `{ error: string }` with HTTP `400`
     - Create and mount a new router at `app.use('/v1/notion', notionRouter)`
     - Keep existing `/` route and `404` behavior unchanged
     - _Requirements: 1.1, 1.4, 6.1, 6.2_
-  - [ ] 1.2 Create Notion v1 router skeleton
+  - [x] 1.2 Create Notion v1 router skeleton
     - Create `routes/v1/notion/index.js` as an Express router
     - Register `POST /sprint-name` on that router (handler added in later tasks)
     - _Requirements: 1.1, 6.1, 6.2_
 
-- [ ] 2. Implement Notion request authentication (header token)
-  - [ ] 2.1 Implement Notion auth middleware
+- [x] 2. Implement Notion request authentication (header token)
+  - [x] 2.1 Implement Notion auth middleware
     - Create `routes/v1/notion/middleware.js`
     - Implement `createNotionAuthMiddleware(expectedToken)`:
       - Read `X-Notion-Automations-Token` (header key `x-notion-automations-token`)
@@ -21,7 +21,7 @@
       - If invalid: return HTTP `401` with `{ error: string }`
     - Apply middleware to all routes under `routes/v1/notion/index.js`
     - _Requirements: 2.1, 2.2, 2.3, 5.2, 6.3_
-  - [ ] 2.2 Add environment variable contract for auth token
+  - [x] 2.2 Add environment variable contract for auth token
     - Define required env var `NOTION_AUTOMATIONS_TOKEN`
     - Add minimal startup validation (either in `app.js` or a new `config/env.js`)
     - Ensure the service fails fast (clear error) if the token is missing at runtime
