@@ -61,15 +61,15 @@
     - Add `getNameGenerator()` singleton factory to avoid re-initialization per request
     - _Requirements: 1.3, 3.1, 3.2, 4.2, 4.3, 4.4, 5.1_
 
-- [ ] 5. Implement the `/v1/notion/sprint-name` endpoint handler and response contract
-  - [ ] 5.1 Add sprint name handler wired with middleware chain
+- [x] 5. Implement the `/v1/notion/sprint-name` endpoint handler and response contract
+  - [x] 5.1 Add sprint name handler wired with middleware chain
     - Create `routes/v1/notion/sprint-name.js`
     - Implement handler pipeline:
       - `validateSprintNameRequest`
       - `handleSprintName` (uses generator to produce output)
     - Ensure success responses are HTTP `200` and JSON
     - _Requirements: 1.1, 1.2, 3.1, 4.1_
-  - [ ] 5.2 Enforce exact response schema for Notion mapping
+  - [x] 5.2 Enforce exact response schema for Notion mapping
     - Ensure handler responds with a JSON object containing **exactly**:
       - `request_id`
       - `name`
