@@ -91,8 +91,8 @@
     - Apply middleware to the Notion router in `routes/v1/notion/index.js`
     - _Requirements: 6.4_
 
-- [ ] 7. Documentation updates for operational use
-  - [ ] 7.1 Document endpoint contract and env vars
+- [x] 7. Documentation updates for operational use
+  - [x] 7.1 Document endpoint contract and env vars
     - Update `README.md` with:
       - `POST /v1/notion/sprint-name` request/response examples
       - Required header `X-Notion-Automations-Token`
