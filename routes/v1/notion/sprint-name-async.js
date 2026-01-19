@@ -75,6 +75,16 @@ function handleSprintNameAsync(req, res) {
     const pageId = req.notionPageId;
     const seed = req.body && req.body.seed;
 
+    // In DEBUG_NOTION_REQUESTS mode, upstream middleware may intentionally bypass validation
+    // so we can observe what Notion sent. Fail gracefully here without enqueuing work.
+    const seedPattern = /^\d{4}_W\d{2}$/;
+    if (!pageId) {
+      return res.status(400).json({ error: '`page_id` is required', request_id: requestId });
+    }
+    if (typeof seed !== 'string' || !seedPattern.test(seed.trim())) {
+      return res.status(400).json({ error: '`seed` must match format YYYY_WNN (e.g. 2026_W04)', request_id: requestId });
+    }
+
     // Fail fast if async Notion update cannot be authenticated/configured.
     const notionApiToken = getNotionApiToken();
     const notionVersion = getNotionVersion();

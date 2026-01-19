@@ -15,6 +15,14 @@ function createNotionAuthMiddleware(expectedToken) {
   };
 }
 
+function isTruthyEnv(value) {
+  if (value === true) return true;
+  if (value === false) return false;
+  if (value === undefined || value === null) return false;
+  const v = String(value).trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes' || v === 'y' || v === 'on';
+}
+
 function validateSprintNameRequest(req, res, next) {
   // Prefer header-based seed for easier invocation from no-code tools.
   // Backwards-compatible fallback: allow seed in JSON body.
@@ -26,20 +34,24 @@ function validateSprintNameRequest(req, res, next) {
   const seed = headerSeed !== undefined && headerSeed !== null ? headerSeed : bodySeed;
 
   if (seed === undefined || seed === null) {
+    if (isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return next();
     return res.status(400).json({ error: '`seed` is required' });
   }
 
   if (typeof seed !== 'string') {
+    if (isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return next();
     return res.status(400).json({ error: '`seed` must be a string' });
   }
 
   const normalizedSeed = seed.trim();
   if (normalizedSeed === '') {
+    if (isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return next();
     return res.status(400).json({ error: '`seed` must be a non-empty string' });
   }
 
   const seedPattern = /^\d{4}_W\d{2}$/;
   if (!seedPattern.test(normalizedSeed)) {
+    if (isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return next();
     return res
       .status(400)
       .json({ error: '`seed` must match format YYYY_WNN (e.g. 2026_W04)' });
@@ -73,6 +85,7 @@ function extractPageIdFromRequest(req) {
 function validateNotionPageId(req, res, next) {
   const pageId = extractPageIdFromRequest(req);
   if (!pageId) {
+    if (isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return next();
     return res.status(400).json({ error: '`page_id` is required' });
   }
 

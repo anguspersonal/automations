@@ -10,8 +10,27 @@ const PORT = process.env.PORT || 3000;
 // Fail fast on required env vars.
 getNotionAutomationsToken();
 
+function isTruthyEnv(value) {
+  if (value === true) return true;
+  if (value === false) return false;
+  if (value === undefined || value === null) return false;
+  const v = String(value).trim().toLowerCase();
+  return v === '1' || v === 'true' || v === 'yes' || v === 'y' || v === 'on';
+}
+
 // Parse JSON request bodies (for API routes)
-app.use(express.json());
+// In DEBUG_NOTION_REQUESTS mode, also capture the raw JSON body for /v1/notion/*.
+app.use(
+  express.json({
+    verify: (req, res, buf) => {
+      if (!isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return;
+      const url = req.originalUrl || req.url;
+      if (typeof url === 'string' && url.startsWith('/v1/notion')) {
+        req.rawBody = buf.toString('utf8');
+      }
+    },
+  })
+);
 
 // Normalize invalid JSON errors to our error schema
 app.use((err, req, res, next) => {
