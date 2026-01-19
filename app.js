@@ -23,9 +23,10 @@ function isTruthyEnv(value) {
 app.use(
   express.json({
     verify: (req, res, buf) => {
-      if (!isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS)) return;
       const url = req.originalUrl || req.url;
-      if (typeof url === 'string' && url.startsWith('/v1/notion')) {
+      const isWebhook = typeof url === 'string' && url.startsWith('/v1/notion/webhook');
+      const isDebugNotion = isTruthyEnv(process.env.DEBUG_NOTION_REQUESTS);
+      if (isWebhook || isDebugNotion) {
         req.rawBody = buf.toString('utf8');
       }
     },
