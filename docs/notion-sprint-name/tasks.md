@@ -18,19 +18,19 @@
     - Update `routes/v1/notion/sprint-name-async.js`
     - _Requirements: 1.2, 1.3, 5.1_
 
-- [ ] 2. Enforce authentication for Notion webhook calls
+- [x] 2. Enforce authentication for Notion webhook calls
   - [ ] 2.1 Ensure auth middleware validates `X-Notion-Automations-Token` and returns `401` JSON errors
     - Validate missing header → `401 { error: string }`
     - Validate invalid token → `401 { error: string }`
     - Confirm case-insensitive header lookup (Express `req.get()` is case-insensitive)
     - Update `routes/v1/notion/middleware.js` if needed
     - _Requirements: 2.1, 2.2_
-  - [ ] 2.2 Keep/extend auth property tests for missing/invalid token behavior
+  - [x] 2.2 Keep/extend auth property tests for missing/invalid token behavior
     - Ensure tests cover missing header, whitespace, and incorrect token cases
     - Update `routes/v1/notion/middleware.property.test.js`
     - _Requirements: 2.1, 2.2_
 
-- [ ] 3. Validate and normalize `seed` and `page_id` (headers preferred, body fallback)
+- [X] 3. Validate and normalize `seed` and `page_id` (headers preferred, body fallback)
   - [x] 3.1 Implement normative seed precedence + regex validation (`^\d{4}_W\d{2}$`)
     - Prefer `X-Notion-Sprint-Seed` header; fallback to `body.seed` only when header is absent
     - Return `400 { error: string }` when missing seed
@@ -102,7 +102,7 @@
     - Ensure the async endpoint additionally enforces `NOTION_API_TOKEN` presence
     - _Requirements: 6.1, 6.2_
 
-- [ ] 7. Testing + performance smoke checks + documentation alignment
+- [x] 7. Testing + performance smoke checks + documentation alignment
   - [x] 7.1 Add unit tests for the async endpoint response contract
     - Valid request → `202` with non-empty `request_id`
     - Queue full → `429 { error: string }`
