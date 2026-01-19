@@ -130,7 +130,7 @@
     - For any request body missing `seed` or with empty/whitespace `seed`, response is HTTP `400` with JSON `{ error: string }` indicating `seed` is required
     - **Validates: Requirements 3.3, 3.4**
 
-  - [ ] 8.7 Add a lightweight performance smoke check (non-flaky)
+  - [x] 8.7 Add a lightweight performance smoke check (non-flaky)
     - Add a small script or integration test that exercises a handful of valid + invalid requests and records observed latency
     - Document how to run it locally and how to interpret results (avoid hard CI thresholds that will be flaky)
     - _Requirements: 5.1, 5.2, 6.4_

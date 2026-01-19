@@ -60,6 +60,27 @@ All errors return JSON with this shape:
 - `NOTION_AUTOMATIONS_TOKEN` (required): shared secret for `X-Notion-Automations-Token`
 - `GENERATOR_VERSION` (optional, default `"1.0.0"`): version identifier for deterministic name generation
 
+### Performance smoke check (non-flaky)
+
+This repo includes a lightweight, **non-asserting** latency smoke script that runs the same middleware + handler chain in-process (no HTTP).
+
+Run:
+
+```bash
+node scripts/notion-sprint-name-perf.js
+```
+
+Optional tuning:
+
+- `PERF_ITERS` (default `200`): iterations per case
+- `PERF_WARMUP` (default `25`): warmup iterations (ignored in output)
+
+Example:
+
+```bash
+PERF_ITERS=500 PERF_WARMUP=50 node scripts/notion-sprint-name-perf.js
+```
+
 ## Architecture decisions
 
 - ADR01 (service boundaries): `docs/ADR01-service-boundaries.md`
