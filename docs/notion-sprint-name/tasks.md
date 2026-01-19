@@ -102,7 +102,7 @@
     - _Requirements: 1.1, 1.4, 2.1, 4.1, 6.3_
 
 - [ ] 8. Tests (unit + property tests for core invariants)
-  - [ ] 8.1 Add a test runner + dependencies
+  - [x] 8.1 Add a test runner + dependencies
     - Choose and configure a JS test runner (e.g. Jest or Vitest) and add scripts to `package.json`
     - Add dev dependencies needed for property tests (e.g. `fast-check`)
     - _Requirements: 3.2, 4.1, 6.4_
