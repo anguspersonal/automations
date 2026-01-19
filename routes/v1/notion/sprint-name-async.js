@@ -1,7 +1,7 @@
 const crypto = require('crypto');
 const { getNameGenerator } = require('../../../lib/name-generator');
 const { enqueueJob } = require('../../../lib/async-jobs');
-const { buildRichTextProperty, updateNotionPage } = require('../../../lib/notion-api');
+const { buildRichTextProperty, buildTitleProperty, updateNotionPage } = require('../../../lib/notion-api');
 const {
   getNotionApiToken,
   getNotionVersion,
@@ -17,18 +17,18 @@ function getRequestId(req) {
   return crypto.randomBytes(16).toString('hex');
 }
 
-async function applySprintNameToNotionPage({ pageId, seed }) {
-  const notionApiToken = getNotionApiToken();
-  const notionVersion = getNotionVersion();
-
+async function applySprintNameToNotionPage({ pageId, seed, notionApiToken, notionVersion }) {
   const generator = getNameGenerator();
   const result = generator.generate(seed);
 
   const props = {};
 
+  const sprintTitle = `Sprint ${result.slug} - ${seed}`;
+
   const nameProp = getNotionSprintNameProperty();
   if (nameProp && String(nameProp).trim() !== '') {
-    props[nameProp] = buildRichTextProperty(result.name);
+    // The configured "sprint name" property is expected to be the database title property.
+    props[nameProp] = buildTitleProperty(sprintTitle);
   }
 
   const slugProp = getNotionSprintSlugProperty();
@@ -71,10 +71,17 @@ function handleSprintNameAsync(req, res) {
     const pageId = req.notionPageId;
     const seed = req.body && req.body.seed;
 
+    // Fail fast if async Notion update cannot be authenticated/configured.
+    const notionApiToken = getNotionApiToken();
+    const notionVersion = getNotionVersion();
+
     // Enqueue background work before responding; but do not wait for it.
-    const result = enqueueJob(() => applySprintNameToNotionPage({ pageId, seed }), {
+    const result = enqueueJob(
+      () => applySprintNameToNotionPage({ pageId, seed, notionApiToken, notionVersion }),
+      {
       onError: (err) => logAsyncNotionFailure({ requestId, pageId }, err),
-    });
+      }
+    );
 
     if (!result.accepted) {
       return res.status(429).json({ error: 'Server is busy, try again later' });

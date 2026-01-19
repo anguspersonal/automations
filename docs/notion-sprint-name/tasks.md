@@ -69,25 +69,25 @@
     - Update `lib/async-jobs.js` and/or `routes/v1/notion/sprint-name-async.js`
     - _Requirements: 5.6_
 
-- [ ] 5. Update Notion page title via Notion API (correct payload + deterministic sprint title)
-  - [ ] 5.1 Compute `generated-slug` deterministically from `seed` and build Sprint Title as `Sprint <generated-slug> - <seed>`
+- [x] 5. Update Notion page title via Notion API (correct payload + deterministic sprint title)
+  - [x] 5.1 Compute `generated-slug` deterministically from `seed` and build Sprint Title as `Sprint <generated-slug> - <seed>`
     - Use `lib/name-generator.js` to compute `slug` deterministically from `seed`
     - Build Sprint Title exactly: `Sprint ${slug} - ${seed}`
     - Ensure repeated requests for same `seed` + `page_id` write the same title
     - Update `routes/v1/notion/sprint-name-async.js` (background job payload preparation)
     - _Requirements: 5.2, 5.3, 5.5_
-  - [ ] 5.2 Implement correct Notion “title property” payload for the configured title property
+  - [x] 5.2 Implement correct Notion “title property” payload for the configured title property
     - Add a helper for title properties (e.g. `buildTitleProperty(content)`) alongside `buildRichTextProperty`
     - Use the title property shape for `NOTION_SPRINT_NAME_PROPERTY` (default `Sprint Name`)
     - Keep optional extra properties (`NOTION_SPRINT_SLUG_PROPERTY`, `NOTION_SPRINT_GENERATOR_VERSION_PROPERTY`) as `rich_text` when configured
     - Update `lib/notion-api.js` and `routes/v1/notion/sprint-name-async.js`
     - _Requirements: 5.4, 6.4_
-  - [ ] 5.3 Ensure Notion API token/version configuration is enforced for async updates
+  - [x] 5.3 Ensure Notion API token/version configuration is enforced for async updates
     - Require `NOTION_API_TOKEN` to be present for the async endpoint (fail fast rather than silently accepting and failing later)
     - Ensure `NOTION_VERSION` is used with a safe default and can be configured
     - Update `config/env.js` and `routes/v1/notion/sprint-name-async.js`
     - _Requirements: 6.2, 6.3_
-  - [ ] 5.4 Ensure Notion API client emits useful errors for logging
+  - [x] 5.4 Ensure Notion API client emits useful errors for logging
     - Ensure failures include status + any JSON body (when present) to help debug permission/property issues
     - Update `lib/notion-api.js` (error shape/metadata as needed)
     - _Requirements: 5.6_
