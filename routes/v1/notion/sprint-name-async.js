@@ -79,7 +79,7 @@ function handleSprintNameAsync(req, res) {
     const result = enqueueJob(
       () => applySprintNameToNotionPage({ pageId, seed, notionApiToken, notionVersion }),
       {
-      onError: (err) => logAsyncNotionFailure({ requestId, pageId }, err),
+        onError: (err) => logAsyncNotionFailure({ requestId, pageId }, err),
       }
     );
 

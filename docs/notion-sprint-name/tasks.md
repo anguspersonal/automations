@@ -92,12 +92,12 @@
     - Update `lib/notion-api.js` (error shape/metadata as needed)
     - _Requirements: 5.6_
 
-- [ ] 6. Observability and operational safety checks
-  - [ ] 6.1 Ensure request-level logs include request id, endpoint, status, and latency
+- [x] 6. Observability and operational safety checks
+  - [x] 6.1 Ensure request-level logs include request id, endpoint, status, and latency
     - Confirm `lib/logging.js` middleware is applied to Notion routes
     - Ensure `request_id` can be used by the async handler (e.g. via `req.requestId`)
     - _Requirements: 6.6_
-  - [ ] 6.2 Ensure service startup enforces required configuration boundaries
+  - [x] 6.2 Ensure service startup enforces required configuration boundaries
     - Confirm `NOTION_AUTOMATIONS_TOKEN` is required at startup (via `config/env.js` usage)
     - Ensure the async endpoint additionally enforces `NOTION_API_TOKEN` presence
     - _Requirements: 6.1, 6.2_
