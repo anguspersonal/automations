@@ -21,21 +21,59 @@ For a step-by-step guide to deploying on [Railway](https://railway.app/?referral
 
 ## Notion: Sprint name webhook
 
-### Endpoint
+### Endpoints
 
-- `POST /v1/notion/sprint-name`
+- **Normative (async, updates Notion page):** `POST /v1/notion/sprint-name/async`
+- **Legacy (sync, returns generated values):** `POST /v1/notion/sprint-name`
 
-### Required headers
+### Normative async endpoint (`POST /v1/notion/sprint-name/async`)
+
+This endpoint is designed for Notion Automations where the webhook response body is not used for downstream mapping. It responds quickly with `202` and then updates the triggering Notion page via the Notion API.
+
+#### Required headers
 
 - `Content-Type: application/json`
 - `X-Notion-Automations-Token: <shared secret>`
-- `X-Notion-Sprint-Seed: <string>`
+- `X-Notion-Sprint-Seed: YYYY_WNN` (e.g. `2026_W04`)
+- `X-Notion-Page-Id: <notion page id>`
 
-### Seed
+#### Seed
 
-Provide a deterministic seed value (e.g. `2026-W04`) via the `X-Notion-Sprint-Seed` header.
+Provide a deterministic seed value in the fixed format `YYYY_WNN` (e.g. `2026_W04`) via the `X-Notion-Sprint-Seed` header.
 
-For backwards compatibility, the endpoint also accepts `{ "seed": "<string>" }` in the JSON body.
+For backwards compatibility, the endpoint also accepts `seed` and/or `page_id` in the JSON body. **Headers take precedence** when present.
+
+#### Success response (202)
+
+```json
+{ "request_id": "4c6d94b5-8897-4b3f-8e20-553e3c3a3b86" }
+```
+
+#### Error responses (4xx/5xx)
+
+All errors return JSON with this shape:
+
+```json
+{ "error": "Human-readable message suitable for logs" }
+```
+
+Common statuses:
+
+- `400` for missing/invalid `seed` or `page_id`
+- `401` for missing/invalid `X-Notion-Automations-Token`
+- `429` when the async job queue is full
+
+#### Notion update behavior
+
+The background job computes the sprint title as:
+
+- `Sprint <generated-slug> - <seed>` (e.g. `Sprint elegant-mercy - 2026_W04`)
+
+and writes it to the Notion page title property named by `NOTION_SPRINT_NAME_PROPERTY` (default `Sprint Name`).
+
+### Legacy synchronous endpoint (`POST /v1/notion/sprint-name`)
+
+This endpoint is kept for compatibility. It returns generated values in the response body and does **not** update Notion pages via the Notion API.
 
 ### Success response (200)
 
@@ -59,6 +97,11 @@ All errors return JSON with this shape:
 ### Environment variables
 
 - `NOTION_AUTOMATIONS_TOKEN` (required): shared secret for `X-Notion-Automations-Token`
+- `NOTION_API_TOKEN` (required for async): Notion API token used to update pages in the background
+- `NOTION_VERSION` (optional, default `2022-06-28`): Notion API version header
+- `NOTION_SPRINT_NAME_PROPERTY` (optional, default `Sprint Name`): the Notion title property to write the sprint title into
+- `NOTION_SPRINT_SLUG_PROPERTY` (optional): if set, also writes the slug into this property (rich_text)
+- `NOTION_SPRINT_GENERATOR_VERSION_PROPERTY` (optional): if set, also writes the generator version into this property (rich_text)
 - `GENERATOR_VERSION` (optional, default `"1.0.0"`): version identifier for deterministic name generation
 
 ### Performance smoke check (non-flaky)
