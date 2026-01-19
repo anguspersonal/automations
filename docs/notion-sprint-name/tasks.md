@@ -27,8 +27,8 @@
     - Ensure the service fails fast (clear error) if the token is missing at runtime
     - _Requirements: 2.1, 2.2, 6.3_
 
-- [ ] 3. Implement request validation and consistent error responses
-  - [ ] 3.1 Validate `seed` is present and non-empty
+- [x] 3. Implement request validation and consistent error responses
+  - [x] 3.1 Validate `seed` is present and non-empty
     - In `routes/v1/notion/middleware.js`, implement `validateSprintNameRequest(req, res, next)`
     - Return HTTP `400` with `{ error: string }` when:
       - Body is missing or not a JSON object
@@ -37,19 +37,19 @@
       - `seed` is empty/whitespace-only
     - Ensure response `Content-Type` is JSON for validation failures
     - _Requirements: 1.4, 3.3, 3.4, 5.2_
-  - [ ] 3.2 Standardize unexpected error handling for the endpoint
+  - [x] 3.2 Standardize unexpected error handling for the endpoint
     - In `routes/v1/notion/sprint-name.js` (added later), wrap handler logic in try/catch
     - Return HTTP `500` with `{ error: string }` on unexpected exceptions
     - _Requirements: 5.3_
 
-- [ ] 4. Implement deterministic sprint name generation (stateless)
-  - [ ] 4.1 Add wordlists for adjective/noun generation
+- [x] 4. Implement deterministic sprint name generation (stateless)
+  - [x] 4.1 Add wordlists for adjective/noun generation
     - Create `lib/wordlists.js`
     - Export `wordlists.adjectives` and `wordlists.nouns` arrays
     - Keep entries lowercase (hyphenated for multi-word)
     - Ensure sufficient size/variety (design target: 100+ items per list)
     - _Requirements: 1.3, 3.1_
-  - [ ] 4.2 Implement deterministic generator with versioning
+  - [x] 4.2 Implement deterministic generator with versioning
     - Create `lib/name-generator.js`
     - Implement `DeterministicNameGenerator` using Node `crypto` hashing over:
       - `seed`
