@@ -121,7 +121,7 @@
     - **Property 2: Response Format Compliance**
     - For any valid `seed`, response has exactly `{ request_id, name, slug, generator_version }`, `request_id` is non-empty, `name === "Sprint " + slug`, and `slug` is a non-empty lowercase-and-hyphens string with no spaces
     - **Validates: Requirements 1.3, 4.1, 4.2, 4.3, 4.4, 4.5**
-  - [ ]* 8.5 Write property test for authentication enforcement
+  - [x]* 8.5 Write property test for authentication enforcement
     - **Property 3: Authentication Enforcement**
     - For any request missing/invalid token, response is HTTP `401` with JSON `{ error: string }`
     - **Validates: Requirements 2.1, 2.2, 2.3**
