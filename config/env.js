@@ -8,10 +8,6 @@ function requireEnv(name) {
   return value;
 }
 
-function getNotionAutomationsToken() {
-  return requireEnv('NOTION_AUTOMATIONS_TOKEN');
-}
-
 function getNotionApiToken() {
   return requireEnv('NOTION_API_TOKEN');
 }
@@ -34,7 +30,6 @@ function getNotionSprintGeneratorVersionProperty() {
 
 module.exports = {
   requireEnv,
-  getNotionAutomationsToken,
   getNotionApiToken,
   getNotionVersion,
   getNotionSprintNameProperty,

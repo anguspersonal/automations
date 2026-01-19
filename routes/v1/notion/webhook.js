@@ -286,7 +286,6 @@ function handleNotionWebhook(req, res) {
         return res.status(200).json({ ok: true });
       }
 
-      const notionApiToken = getNotionApiToken();
       // Prefer the version Notion used to send the event (matches latest payload shapes).
       const notionVersion =
         body && typeof body === 'object' && typeof body.api_version === 'string' && body.api_version.trim() !== ''
@@ -298,6 +297,23 @@ function handleNotionWebhook(req, res) {
 
       const enqueueResult = enqueueJob(
         async () => {
+          let notionApiToken;
+          try {
+            notionApiToken = getNotionApiToken();
+          } catch (err) {
+            console.error(
+              safeJsonStringify({
+                level: 'error',
+                msg: 'missing NOTION_API_TOKEN; cannot update sprint page',
+                event_id: eventId,
+                page_id: entityId,
+                parent_id: parentId,
+                parent_data_source_id: parentDataSourceId,
+              })
+            );
+            return;
+          }
+
           const page = await retrieveNotionPage({
             notionApiToken,
             notionVersion,
@@ -378,7 +394,15 @@ function handleNotionWebhook(req, res) {
     // Always acknowledge quickly; any heavy work should be queued.
     return res.status(200).json({ ok: true });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal server error' });
+    // Do not fail webhook delivery with 5xx — Notion will retry noisily.
+    console.error(
+      safeJsonStringify({
+        level: 'error',
+        msg: 'notion webhook handler failed',
+        error: { message: err && err.message ? String(err.message) : 'Unknown error' },
+      })
+    );
+    return res.status(200).json({ ok: true });
   }
 }
 

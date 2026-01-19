@@ -23,45 +23,34 @@ For a step-by-step guide to deploying on [Railway](https://railway.app/?referral
 
 ### Endpoints
 
-- **Normative (async, updates Notion page):** `POST /v1/notion/sprint-name/async`
-- **Legacy (sync, returns generated values):** `POST /v1/notion/sprint-name`
+**Webhook subscription (updates Notion page):** `POST /v1/notion/webhook`
 
-### Normative async endpoint (`POST /v1/notion/sprint-name/async`)
+### Webhook subscription endpoint (`POST /v1/notion/webhook`)
 
-This endpoint is designed for Notion Automations where the webhook response body is not used for downstream mapping. It responds quickly with `202` and then updates the triggering Notion page via the Notion API.
+This endpoint is designed for **Notion webhook subscriptions** (e.g. `page.created`). It responds quickly with `200` and then updates the triggering Notion page via the Notion API in the background.
 
-#### Required headers
+#### Webhook setup (Notion UI)
 
-- `Content-Type: application/json`
-- `X-Notion-Automations-Token: <shared secret>`
-- `X-Notion-Sprint-Seed: YYYY_WNN` (e.g. `2026_W04`)
-- `X-Notion-Page-Id: <notion page id>`
+- In your Notion integration settings, create a webhook subscription pointing to:
+  - `POST /v1/notion/webhook`
+- Subscribe to at least `page.created`.
 
 #### Seed
 
-Provide a deterministic seed value in the fixed format `YYYY_WNN` (e.g. `2026_W04`) via the `X-Notion-Sprint-Seed` header.
+Seed is derived from the newly-created page:
 
-For backwards compatibility, the endpoint also accepts `seed` and/or `page_id` in the JSON body. **Headers take precedence** when present.
+- If the page title already contains a seed like `YYYY_WNN`, it will be used.
+- Otherwise, the service computes the current ISO week seed (e.g. `2026_W04`) from the webhook timestamp.
 
-#### Success response (202)
+#### Success response (200)
 
 ```json
-{ "request_id": "4c6d94b5-8897-4b3f-8e20-553e3c3a3b86" }
+{ "ok": true }
 ```
 
 #### Error responses (4xx/5xx)
 
-All errors return JSON with this shape:
-
-```json
-{ "error": "Human-readable message suitable for logs" }
-```
-
-Common statuses:
-
-- `400` for missing/invalid `seed` or `page_id`
-- `401` for missing/invalid `X-Notion-Automations-Token`
-- `429` when the async job queue is full
+For webhook deliveries, the endpoint returns `401` only for invalid signatures (when configured). Other failures are logged and the endpoint still returns `200` to avoid webhook retries.
 
 #### Notion update behavior
 
@@ -71,63 +60,23 @@ The background job computes the sprint title as:
 
 and writes it to the Notion page title property named by `NOTION_SPRINT_NAME_PROPERTY` (default `Sprint Name`).
 
-### Legacy synchronous endpoint (`POST /v1/notion/sprint-name`)
-
-This endpoint is kept for compatibility. It returns generated values in the response body and does **not** update Notion pages via the Notion API.
-
-### Success response (200)
-
-```json
-{
-  "request_id": "4c6d94b5-8897-4b3f-8e20-553e3c3a3b86",
-  "name": "Sprint elegant-mercy",
-  "slug": "elegant-mercy",
-  "generator_version": "1.0.0"
-}
-```
-
-### Error responses (4xx/5xx)
-
-All errors return JSON with this shape:
-
-```json
-{ "error": "Human-readable message suitable for logs" }
-```
-
 ### Environment variables
 
-- `NOTION_AUTOMATIONS_TOKEN` (required): shared secret for `X-Notion-Automations-Token`
 - `NOTION_API_TOKEN` (required for async): Notion API token used to update pages in the background
 - `NOTION_VERSION` (optional, default `2022-06-28`): Notion API version header
 - `NOTION_SPRINT_NAME_PROPERTY` (optional, default `Sprint Name`): the Notion title property to write the sprint title into
 - `NOTION_SPRINT_SLUG_PROPERTY` (optional): if set, also writes the slug into this property (rich_text)
 - `NOTION_SPRINT_GENERATOR_VERSION_PROPERTY` (optional): if set, also writes the generator version into this property (rich_text)
+- `NOTION_WEBHOOK_VERIFICATION_TOKEN` (recommended): used to validate `X-Notion-Signature`
+- `NOTION_SPRINTS_DATABASE_ID` (recommended): only process webhook events for this database id
+- `NOTION_SPRINTS_DATA_SOURCE_ID` (optional): alternative filter for newer Notion data sources
+- `NOTION_SPRINT_SEED_PROPERTY` (optional): if set, read the seed from this page property name
 - `GENERATOR_VERSION` (optional, default `"1.0.0"`): version identifier for deterministic name generation
-
-### Performance smoke check (non-flaky)
-
-This repo includes a lightweight, **non-asserting** latency smoke script that runs the same middleware + handler chain in-process (no HTTP).
-
-Run:
-
-```bash
-node scripts/notion-sprint-name-perf.js
-```
-
-Optional tuning:
-
-- `PERF_ITERS` (default `200`): iterations per case
-- `PERF_WARMUP` (default `25`): warmup iterations (ignored in output)
-
-Example:
-
-```bash
-PERF_ITERS=500 PERF_WARMUP=50 node scripts/notion-sprint-name-perf.js
-```
 
 ## Architecture decisions
 
 - ADR01 (service boundaries): `docs/ADR01-service-boundaries.md`
+ - ADR02 (Notion sprint naming via webhooks): `docs/ADR02-notion-sprint-name-webhooks.md`
 
 
 
