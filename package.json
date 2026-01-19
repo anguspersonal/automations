@@ -9,6 +9,9 @@
     "express": "^4.19.2"
   },
   "scripts": {
-    "start": "node app.js"
+    "start": "node app.js",
+    "lint": "node --check app.js routes/index.js routes/v1/notion/index.js",
+    "test": "npm run lint",
+    "build": "npm run lint"
   }
 }
