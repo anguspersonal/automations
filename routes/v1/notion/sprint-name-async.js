@@ -17,13 +17,17 @@ function getRequestId(req) {
   return crypto.randomBytes(16).toString('hex');
 }
 
+function formatSprintTitle({ slug, seed }) {
+  return `Sprint ${slug} - ${seed}`;
+}
+
 async function applySprintNameToNotionPage({ pageId, seed, notionApiToken, notionVersion }) {
   const generator = getNameGenerator();
   const result = generator.generate(seed);
 
   const props = {};
 
-  const sprintTitle = `Sprint ${result.slug} - ${seed}`;
+  const sprintTitle = formatSprintTitle({ slug: result.slug, seed });
 
   const nameProp = getNotionSprintNameProperty();
   if (nameProp && String(nameProp).trim() !== '') {
@@ -96,5 +100,6 @@ function handleSprintNameAsync(req, res) {
 
 module.exports = {
   handleSprintNameAsync,
+  formatSprintTitle,
 };
 

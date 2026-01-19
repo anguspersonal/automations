@@ -103,28 +103,28 @@
     - _Requirements: 6.1, 6.2_
 
 - [ ] 7. Testing + performance smoke checks + documentation alignment
-  - [ ] 7.1 Add unit tests for the async endpoint response contract
+  - [x] 7.1 Add unit tests for the async endpoint response contract
     - Valid request → `202` with non-empty `request_id`
     - Queue full → `429 { error: string }`
     - Missing/invalid auth → `401 { error: string }`
     - Missing/invalid seed/page id → `400 { error: string }`
     - Add `routes/v1/notion/sprint-name-async.test.js`
     - _Requirements: 1.1, 1.3, 2.1, 2.2, 3.2, 3.4, 4.2, 6.5_
-  - [ ]* 7.2 **Property 3: Accept response has correct shape**
+  - [x]* 7.2 **Property 3: Accept response has correct shape**
     - **Validates:** Requirements 1.1, 1.3
     - For any valid seed + page id and valid token, handler returns `202` and `{ request_id: non-empty string }`
     - Add `routes/v1/notion/sprint-name-async.property.test.js` (or extend existing property test files)
     - _Requirements: 1.1, 1.3_
-  - [ ]* 7.3 **Property 4: Deterministic title formatting**
+  - [x]* 7.3 **Property 4: Deterministic title formatting**
     - **Validates:** Requirements 5.2, 5.3, 5.5
     - For any valid seed, the computed Sprint Title is exactly `Sprint <slug> - <seed>` (and stable across repeated runs)
     - Add `routes/v1/notion/sprint-name-async.property.test.js` (or extend existing property test files)
     - _Requirements: 5.2, 5.3, 5.5_
-  - [ ] 7.4 Update performance smoke script to reflect normative seed format and (optionally) async acceptance path
+  - [x] 7.4 Update performance smoke script to reflect normative seed format and (optionally) async acceptance path
     - Update `scripts/notion-sprint-name-perf.js` seed examples to `YYYY_WNN` format
     - Add a basic “async accept” case if the script is extended to cover `/sprint-name/async`
     - _Requirements: 1.2, 3.3_
-  - [ ] 7.5 Ensure docs match the implementation details and defaults
+  - [x] 7.5 Ensure docs match the implementation details and defaults
     - Verify `docs/notion-sprint-name/design.md` matches actual payload shape (title vs rich_text) and seed format (`YYYY_WNN`)
     - Verify `docs/notion-sprint-name/requirements.md` contract is reflected in code + tests
     - _Requirements: 1.1, 3.3, 5.3, 5.4, 6.4_

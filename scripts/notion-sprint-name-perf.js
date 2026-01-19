@@ -133,16 +133,17 @@ function main() {
 
   // Warmup to reduce one-time effects (JIT, module init, etc.)
   runCase(
-    { name: 'warmup (valid)', token: 'perf-token', seedHeader: '2026-W04', body: {}, expectedStatus: 200 },
+    { name: 'warmup (valid)', token: 'perf-token', seedHeader: '2026_W04', body: {}, expectedStatus: 200 },
     warmup
   );
 
   const cases = [
-    { name: 'valid', token: 'perf-token', seedHeader: '2026-W04', body: {}, expectedStatus: 200 },
-    { name: 'auth missing token', token: undefined, seedHeader: '2026-W04', body: {}, expectedStatus: 401 },
-    { name: 'auth invalid token', token: 'wrong', seedHeader: '2026-W04', body: {}, expectedStatus: 401 },
+    { name: 'valid', token: 'perf-token', seedHeader: '2026_W04', body: {}, expectedStatus: 200 },
+    { name: 'auth missing token', token: undefined, seedHeader: '2026_W04', body: {}, expectedStatus: 401 },
+    { name: 'auth invalid token', token: 'wrong', seedHeader: '2026_W04', body: {}, expectedStatus: 401 },
     { name: 'validation missing seed', token: 'perf-token', seedHeader: undefined, body: {}, expectedStatus: 400 },
     { name: 'validation empty seed', token: 'perf-token', seedHeader: '   ', body: {}, expectedStatus: 400 },
+    { name: 'validation bad seed format', token: 'perf-token', seedHeader: '2026-W04', body: {}, expectedStatus: 400 },
   ];
 
   const results = cases.map((c) => runCase(c, iterations));
