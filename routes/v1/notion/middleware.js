@@ -1,6 +1,7 @@
 function createNotionAuthMiddleware(expectedToken) {
   return function notionAuthMiddleware(req, res, next) {
-    const token = req.get('x-notion-automations-token');
+    const tokenRaw = req.get('x-notion-automations-token');
+    const token = typeof tokenRaw === 'string' ? tokenRaw.trim() : tokenRaw;
 
     if (!token) {
       return res.status(401).json({ error: 'Missing X-Notion-Automations-Token header' });
@@ -32,15 +33,23 @@ function validateSprintNameRequest(req, res, next) {
     return res.status(400).json({ error: '`seed` must be a string' });
   }
 
-  if (seed.trim() === '') {
+  const normalizedSeed = seed.trim();
+  if (normalizedSeed === '') {
     return res.status(400).json({ error: '`seed` must be a non-empty string' });
+  }
+
+  const seedPattern = /^\d{4}_W\d{2}$/;
+  if (!seedPattern.test(normalizedSeed)) {
+    return res
+      .status(400)
+      .json({ error: '`seed` must match format YYYY_WNN (e.g. 2026_W04)' });
   }
 
   // Normalize for downstream handler (which reads req.body.seed).
   if (!req.body || typeof req.body !== 'object' || Array.isArray(req.body)) {
     req.body = {};
   }
-  req.body.seed = seed;
+  req.body.seed = normalizedSeed;
 
   return next();
 }

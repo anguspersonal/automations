@@ -24,7 +24,7 @@ describe('Notion auth middleware (property tests)', () => {
       fc.property(
         fc
           .string({ minLength: 1, maxLength: 100 })
-          .filter((expectedToken) => expectedToken.trim() !== ''),
+          .filter((expectedToken) => expectedToken.trim() !== '' && expectedToken === expectedToken.trim()),
         fc.oneof(
           // missing header
           fc.constant(undefined),
@@ -57,6 +57,38 @@ describe('Notion auth middleware (property tests)', () => {
           expect(res.statusCode).toBe(401);
           expect(res.body).toEqual({ error: expect.any(String) });
           expect(res.body.error.trim()).not.toBe('');
+        }
+      ),
+      { numRuns: 200 }
+    );
+  });
+
+  test('Property 3a: valid token with surrounding whitespace authenticates', () => {
+    fc.assert(
+      fc.property(
+        fc
+          .string({ minLength: 1, maxLength: 100 })
+          .filter((expectedToken) => expectedToken.trim() !== '' && expectedToken === expectedToken.trim()),
+        fc
+          .string({ minLength: 1, maxLength: 10 })
+          .filter((s) => s.trim() === ''),
+        fc
+          .string({ minLength: 1, maxLength: 10 })
+          .filter((s) => s.trim() === ''),
+        (expectedToken, leftWs, rightWs) => {
+          const auth = createNotionAuthMiddleware(expectedToken);
+
+          const req = {
+            get: () => `${leftWs}${expectedToken}${rightWs}`,
+          };
+          const res = createMockRes();
+          const next = jest.fn();
+
+          auth(req, res, next);
+
+          expect(res.statusCode).toBeUndefined();
+          expect(res.body).toBeUndefined();
+          expect(next).toHaveBeenCalledTimes(1);
         }
       ),
       { numRuns: 200 }

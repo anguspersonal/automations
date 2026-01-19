@@ -19,7 +19,7 @@ function createMockRes() {
 }
 
 describe('Notion sprint-name request validation (property tests)', () => {
-  test('Property 4: missing/empty seed -> 400 + JSON { error: string } indicating seed requirement', () => {
+  test('Property 1: missing/empty/invalid-format seed -> 400 + JSON { error: string } indicating seed requirement', () => {
     fc.assert(
       fc.property(
         fc.oneof(
@@ -31,6 +31,12 @@ describe('Notion sprint-name request validation (property tests)', () => {
           fc
             .string({ minLength: 1, maxLength: 200 })
             .filter((s) => s.trim() === '')
+            .map((seed) => ({ seed }))
+          ,
+          // Wrong format seeds (non-empty, but not YYYY_WNN)
+          fc
+            .string({ minLength: 1, maxLength: 200 })
+            .filter((s) => s.trim() !== '' && !/^\d{4}_W\d{2}$/.test(s.trim()))
             .map((seed) => ({ seed }))
         ),
         (body) => {

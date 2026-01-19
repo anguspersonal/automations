@@ -31,26 +31,26 @@
     - _Requirements: 2.1, 2.2_
 
 - [ ] 3. Validate and normalize `seed` and `page_id` (headers preferred, body fallback)
-  - [ ] 3.1 Implement normative seed precedence + regex validation (`^\d{4}_W\d{2}$`)
+  - [x] 3.1 Implement normative seed precedence + regex validation (`^\d{4}_W\d{2}$`)
     - Prefer `X-Notion-Sprint-Seed` header; fallback to `body.seed` only when header is absent
     - Return `400 { error: string }` when missing seed
     - Return `400 { error: string }` when seed fails regex, and ensure the message indicates required format `YYYY_WNN`
     - Normalize validated seed into `req.body.seed` for downstream handlers
     - Update `routes/v1/notion/middleware.js` (`validateSprintNameRequest`)
     - _Requirements: 3.1, 3.2, 3.3, 3.4, 3.5_
-  - [ ] 3.2 Implement normative page id precedence (header preferred) and required validation
+  - [x] 3.2 Implement normative page id precedence (header preferred) and required validation
     - Prefer `X-Notion-Page-Id` header; fallback to `body.page_id` (and other supported shapes) only when header is absent
     - Return `400 { error: string }` when page id is missing
     - Normalize page id to `req.notionPageId` for downstream handlers
     - Update `routes/v1/notion/middleware.js` (`validateNotionPageId` / `extractPageIdFromRequest`)
     - _Requirements: 4.1, 4.2, 4.3_
-  - [ ]* 3.3 **Property 1: Seed presence + format validation**
+  - [x]* 3.3 **Property 1: Seed presence + format validation**
     - **Validates:** Requirements 3.2, 3.3, 3.4
     - Validate missing seed → `400 { error: string }`
     - Validate any non-matching seed → `400 { error: string }` mentioning `YYYY_WNN`
     - Update/add `routes/v1/notion/validation.property.test.js` (or a new property test file if clearer)
     - _Requirements: 3.2, 3.3, 3.4_
-  - [ ]* 3.4 **Property 2: Page id required**
+  - [x]* 3.4 **Property 2: Page id required**
     - **Validates:** Requirements 4.2
     - Validate missing page id across header/body shapes → `400 { error: string }`
     - Add `routes/v1/notion/page-id.property.test.js` (or extend an existing property test file)

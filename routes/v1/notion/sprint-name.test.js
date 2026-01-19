@@ -95,7 +95,7 @@ describe('Notion sprint name - request validation middleware', () => {
 
   test('seed from header passes and normalizes to req.body.seed', () => {
     const req = {
-      get: (key) => (key === 'x-notion-sprint-seed' ? '2026-W04' : undefined),
+      get: (key) => (key === 'x-notion-sprint-seed' ? '2026_W04' : undefined),
       body: undefined,
     };
     const res = createMockRes();
@@ -106,7 +106,7 @@ describe('Notion sprint name - request validation middleware', () => {
     expect(res.statusCode).toBeUndefined();
     expect(res.body).toBeUndefined();
     expect(next).toHaveBeenCalledTimes(1);
-    expect(req.body).toEqual({ seed: '2026-W04' });
+    expect(req.body).toEqual({ seed: '2026_W04' });
   });
 });
 
